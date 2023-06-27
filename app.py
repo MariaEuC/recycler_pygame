@@ -1,4 +1,5 @@
 import pygame, sys, random
+import pygame_menu
 from colores import Colores
 
 
@@ -37,45 +38,56 @@ recycler = Recycler()
 
 all_sprite_list.add(recycler)
 
+# Crear menu
 for i in range(20):
     bottle = Bottle()
-    bottle.rect.x = random.randrange(900)
-    bottle.rect.y = random.randrange(600)
+    bottle.rect.x = random.randrange(800)
+    bottle.rect.y = random.randrange(500)
 
     bottle_list.add(bottle)
     all_sprite_list.add(bottle)
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
 
-    # Se obtine la posicion del mouse
-    x, y = pygame.mouse.get_pos()
+def start_the_game():
+    score = 0
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
 
-    # Color de fondo
-    screen.fill(Colores.GRASS)
+        # Se obtine la posicion del mouse
+        x, y = pygame.mouse.get_pos()
 
-    # Area de dibujo
-    all_sprite_list.draw(screen)
+        # Color de fondo
+        screen.fill(Colores.GRASS)
 
-    # Para mover el reclicador en el tablero
-    recycler.rect.x = x
-    recycler.rect.y = y
+        # Area de dibujo
+        all_sprite_list.draw(screen)
 
-    # Se detectan las colisiones
-    bottle_collide_list = pygame.sprite.spritecollide(recycler, bottle_list, True)
+        # Para mover el reclicador en el tablero
+        recycler.rect.x = x
+        recycler.rect.y = y
 
-    # Para guardar el marcador
-    for botlle in bottle_collide_list:
-        score += 1
+        # Se detectan las colisiones
+        bottle_collide_list = pygame.sprite.spritecollide(recycler, bottle_list, True)
 
-    # se acaba el juego
-    if score == 20:
-        screen.fill(Colores.WHITE)
-        font = pygame.font.SysFont("arial", 24)
-        text = font.render("Reciclaste todas las botellas!!!", True, Colores.BLACK)
-        screen.blit(text, (200, 250))
+        # Para guardar el marcador
+        for botlle in bottle_collide_list:
+            score += 1
 
-    pygame.display.flip()
-    clock.tick(60)
+        # se acaba el juego
+        if score == 20:
+            screen.fill(Colores.WHITE)
+            font = pygame.font.SysFont("arial", 24)
+            text = font.render("Reciclaste todas las botellas!!!", True, Colores.BLACK)
+            screen.blit(text, (200, 250))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+menu = pygame_menu.Menu('Bienvenido',400,300, theme=pygame_menu.themes.THEME_DARK)
+menu.add.button('Jugar', start_the_game)
+menu.add.button('Salir', pygame_menu.events.EXIT)
+
+menu.mainloop(screen)
+
